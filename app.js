@@ -185,6 +185,7 @@ const game = () => {
 
 const endGame = () => {
   clearInterval(indexInterval);
+  newGameBtn.classList.remove("visible");
 };
 
 const restartGame = () => {
@@ -194,6 +195,7 @@ const restartGame = () => {
 const startGame = () => {
   restartGame();
   indexInterval = setInterval(game, 1000 / 60);
+  newGameBtn.classList.add("visible");
 };
 
 newGameBtn.addEventListener("click", startGame);
