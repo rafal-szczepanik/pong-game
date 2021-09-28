@@ -1,4 +1,7 @@
 const canvas = document.querySelector("canvas");
+const restartBtn = document.querySelector(".restart-btn");
+const newGameBtn = document.querySelector(".newgame-btn");
+const scores = document.querySelector(".result");
 const ctx = canvas.getContext("2d");
 
 canvas.width = 1000;
@@ -22,6 +25,11 @@ let aiY = 200;
 
 const lineWidth = 6;
 const lineHeight = 16;
+
+let results = { player: 0, ai: 0 };
+
+let indexInterval;
+
 const drawDirection = () => {
   const number = Math.floor(Math.random() * 2);
   if (number === 0) {
@@ -38,11 +46,29 @@ let ballSpeedY = drawDirection();
 const player = () => {
   ctx.fillStyle = "yellowgreen";
   ctx.fillRect(playerX, playerY, paddleWidth, paddleHeight);
+  if (ballX <= playerX + paddleWidth) {
+    if (
+      ballY + ballSize / 2 >= playerY &&
+      ballY + ballSize / 2 < playerY + paddleHeight
+    ) {
+      ballSpeedX = -ballSpeedX;
+      ballX += 5;
+    }
+  }
 };
 
 const ai = () => {
   ctx.fillStyle = "yellow";
   ctx.fillRect(aiX, aiY, paddleWidth, paddleHeight);
+  if (ballX >= aiX - paddleWidth) {
+    if (
+      ballY + ballSize / 2 >= aiY &&
+      ballY + ballSize / 2 < aiY + paddleHeight
+    ) {
+      ballSpeedX = -ballSpeedX;
+      ballX -= 5;
+    }
+  }
 };
 
 const ball = () => {
@@ -56,14 +82,20 @@ const ball = () => {
     speedUp();
   }
 
-  if (ballX <= 0 || ballX + ballSize >= cw) {
-    ballSpeedX = -ballSpeedX;
-  }
-
-  if (ballX <= playerX + paddleWidth) {
-    if (ballY + ballSize >= playerY && ballY < playerY + paddleHeight) {
-      ballSpeedX = -ballSpeedX;
-      ballX += 5;
+  if (ballX <= 0) {
+    results.player += 1;
+    console.log(results);
+    nextRound();
+    if (results.player === 3) {
+      scores.innerText = `${results.player} : ${results.ai} Player won the game`;
+      endGame();
+    }
+  } else if (ballX + ballSize >= cw) {
+    results.ai += 1;
+    nextRound();
+    if (results.ai === 3) {
+      scores.innerText = `${results.player} : ${results.ai} Computer AI won the game`;
+      endGame();
     }
   }
 };
@@ -75,6 +107,10 @@ const table = () => {
     ctx.fillStyle = "white";
     ctx.fillRect(cw / 2 - lineWidth / 2, linePosition, lineWidth, lineHeight);
   }
+};
+
+const result = () => {
+  ctx.fillStyle = "red";
 };
 
 const topCanvas = canvas.offsetTop;
@@ -127,6 +163,16 @@ const aiPosition = () => {
   }
 };
 
+const nextRound = () => {
+  ballSpeedX = drawDirection();
+  ballSpeedY = drawDirection();
+  ballX = cw / 2 - ballSize / 2;
+  ballY = ch / 2 - ballSize / 2;
+  playerY = 200;
+  aiY = 200;
+  scores.innerText = `${results.player} : ${results.ai}`;
+};
+
 canvas.addEventListener("mousemove", playerPosition);
 
 const game = () => {
@@ -137,4 +183,19 @@ const game = () => {
   aiPosition();
 };
 
-const indexInterval = setInterval(game, 1000 / 60);
+const endGame = () => {
+  clearInterval(indexInterval);
+};
+
+const restartGame = () => {
+  results = { player: 0, ai: 0 };
+  nextRound();
+};
+const startGame = () => {
+  restartGame();
+  indexInterval = setInterval(game, 1000 / 60);
+};
+
+newGameBtn.addEventListener("click", startGame);
+restartBtn.addEventListener("click", restartGame);
+game();
