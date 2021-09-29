@@ -83,7 +83,7 @@ const ball = () => {
   }
 
   if (ballX <= 0) {
-    results.player += 1;
+    results.ai += 1;
     console.log(results);
     nextRound();
     if (results.player === 3) {
@@ -91,7 +91,7 @@ const ball = () => {
       endGame();
     }
   } else if (ballX + ballSize >= cw) {
-    results.ai += 1;
+    results.player += 1;
     nextRound();
     if (results.ai === 3) {
       scores.innerText = `${results.player} : ${results.ai} Computer AI won the game`;
