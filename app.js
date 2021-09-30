@@ -33,9 +33,9 @@ let indexInterval;
 const drawDirection = () => {
   const number = Math.floor(Math.random() * 2);
   if (number === 0) {
-    return -1;
+    return -2;
   } else {
-    return 1;
+    return 2;
   }
 };
 
@@ -86,15 +86,15 @@ const ball = () => {
     results.ai += 1;
     console.log(results);
     nextRound();
-    if (results.player === 3) {
-      scores.innerText = `${results.player} : ${results.ai} Player won the game`;
+    if (results.ai === 3) {
+      scores.innerText = `${results.player} : ${results.ai} Player lost the game`;
       endGame();
     }
   } else if (ballX + ballSize >= cw) {
     results.player += 1;
     nextRound();
-    if (results.ai === 3) {
-      scores.innerText = `${results.player} : ${results.ai} Computer AI won the game`;
+    if (results.player === 3) {
+      scores.innerText = `${results.player} : ${results.ai} Player won the game`;
       endGame();
     }
   }
